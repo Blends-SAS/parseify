@@ -1,1 +1,68 @@
-# parseify
+# Parseify
+
+Get any information from any website you need.
+
+## Installation
+
+```bash
+pip install parseify
+```
+
+## Usage
+
+```python
+from parsers.openai_parser import OpenAIParser
+from core import WebsiteAnalyzer
+from scrapers.scrapingbee_scraper import ScrapingBeeScraper
+
+# Initialize the library
+scraper = ScrapingBeeScraper(api_key="")
+parser = OpenAIParser(api_key="")
+analyzer = WebsiteAnalyzer(scraper_engine=scraper, parser_engine=parser)
+
+# Define schema
+schema = {
+    "mission": "La mission de l'entreprise",
+    "news": "Actualités de l'entreprise",
+}
+
+# Analyze a website
+results = analyzer.analyze("https://mistral.ai/fr/", schema)
+print(results)
+```
+
+Will return: 
+```json
+{
+  "mission": "We lead the market of open source generative technologies to bring trust and transparency in the field and foster decentralised technology development.",
+  "news": "Mistral is introducing new products and services including a free API, improved pricing for their services, and a moderation service for text content detection. They have also announced the Mistral Small and Pixtral Large models, aimed at AI builders.",
+  "visited_links": [
+    "https://mistral.ai/fr/",
+    "https://mistral.ai/news"
+  ],
+  "logos": [],
+  "favicon": "https://mistral.ai/images/favicon/apple-touch-icon.png"
+}
+
+```
+
+## Available scrapers
+
+Currently, the library supports the following scrapers:
+
+**ScraperAPI**
+``` 
+scraper = ScraperAPIScraper(api_key="", render=True)
+```
+
+**ScrapingBee**
+```
+scraper = ScrapingBeeScraper(api_key="", render=True)
+```
+
+**Default HTTP request**
+```
+scraper = RequestsScraper()
+```
+
+JS rendering (supported by ScraperAPI and ScrapingBee) is often recommended.

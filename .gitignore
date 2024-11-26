@@ -1,0 +1,9 @@
+env/
+.idea
+.venv
+test_nb.ipynb
+/tests
+**/__pycache__/
+.pytest_cache
+pypip_requirements.txt
+.env
