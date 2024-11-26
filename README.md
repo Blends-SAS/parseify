@@ -11,13 +11,12 @@ pip install parseify
 ## Usage
 
 ```python
-from parsers.openai_parser import OpenAIParser
-from core import WebsiteAnalyzer
-from scrapers.scrapingbee_scraper import ScrapingBeeScraper
+from parseify import OpenAIParser, RequestsScraper, ScraperAPIScraper, ScrapingBeeScraper, WebsiteAnalyzer
 
 # Initialize the library
-scraper = ScrapingBeeScraper(api_key="")
-parser = OpenAIParser(api_key="")
+
+scraper = ScrapingBeeScraper(api_key="your-api-key-here")
+parser = OpenAIParser(api_key="your-api-key-here")
 analyzer = WebsiteAnalyzer(scraper_engine=scraper, parser_engine=parser)
 
 # Define schema
