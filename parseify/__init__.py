@@ -1,5 +1,3 @@
-
-from .parsers.base_parser import BaseParser
 from .parsers.openai_parser import OpenAIParser
 from .extractors.dom_extractor import DomExtractor
 from .scrapers.base_scraper import BaseScraper

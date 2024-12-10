@@ -8,9 +8,11 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='parseify',
-    packages=find_packages(include=['parseify']),
-    version='0.1',
-    description="",
+    packages=find_packages(),
+    version='0.5',
+    license="MIT",
+    include_package_data=True,
+    description="Get any information from any website you need.",
     author='Juan Camilo Lopez',
     install_requires=['requests', 'lxml'],
     setup_requires=['pytest-runner'],
