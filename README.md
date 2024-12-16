@@ -10,6 +10,11 @@ pip install parseify
 
 ## Usage
 
+Quick notes: 
+
+* You can set the ```max_links```  parameter to restrict the maximum of links that the progran can navigate to find your requested information.  ```
+* Set ```translate = None ``` to return the results in the original language! or translate them to the language of your choice.
+
 ```python
 from parseify import OpenAIParser, RequestsScraper, ScraperAPIScraper, ScrapingBeeScraper, WebsiteAnalyzer
 
@@ -17,7 +22,7 @@ from parseify import OpenAIParser, RequestsScraper, ScraperAPIScraper, ScrapingB
 
 scraper = ScrapingBeeScraper(api_key="your-api-key-here")
 parser = OpenAIParser(api_key="your-api-key-here")
-analyzer = WebsiteAnalyzer(scraper_engine=scraper, parser_engine=parser)
+analyzer = WebsiteAnalyzer(scraper_engine=scraper, parser_engine=parser, max_links=3, translate = 'english')
 
 # Define schema
 schema = {
@@ -29,6 +34,7 @@ schema = {
 results = analyzer.analyze("https://mistral.ai/fr/", schema)
 print(results)
 ```
+
 
 Will return: 
 ```json

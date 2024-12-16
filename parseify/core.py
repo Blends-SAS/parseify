@@ -1,16 +1,23 @@
-from parseify import DomExtractor
+from parseify import DomExtractor, OpenAIService
 import json
 import logging
 
 logger = logging.getLogger(__name__)
 
 
+
+
+
+
+
 class WebsiteAnalyzer:
-    def __init__(self, scraper_engine, parser_engine, extractor_engine=DomExtractor, max_links=5):
+    def __init__(self, scraper_engine, parser_engine, extractor_engine=DomExtractor, max_links=3,  translate = 'english'):
         self.scraper = scraper_engine
         self.parser = parser_engine
         self.extractor = extractor_engine()
         self.max_links = max_links  # Limit the number of links to explore
+        self.translate = translate
+
 
     def analyze(self, url, schema):
         visited_links = [url]
@@ -33,7 +40,13 @@ class WebsiteAnalyzer:
                 return current_results, None
 
         # Step 1: Process the main page
+
         results, extracted_content = process_page(url, results)
+
+        # Rise and exception for when the first web page fails to load
+        if extracted_content is None:
+            raise Exception("Invalid URL provided, or scraper could not access requested URL")
+
         images = {
             "logos": extracted_content["logos"],
             "favicon": extracted_content["favicon"]
@@ -45,6 +58,7 @@ class WebsiteAnalyzer:
         if missing_fields and extracted_content:
             try:
                 next_links = extracted_content["links"]
+                
                 filtered_links = self._filter_next_links(next_links, missing_fields)
                 filtered_links = filtered_links[:self.max_links]
 
@@ -63,6 +77,12 @@ class WebsiteAnalyzer:
 
         results["visited_links"] = visited_links
         results.update(images)
+
+        # Translate the results
+
+        if self.translate:
+            results = OpenAIService(api_key= self.parser.api_key).translate(results=results, language=self.translate) # Take the key of OpenAIParser
+
         return results
 
     def fill_json_schema(self, page_content, information_requested, results):
@@ -172,7 +192,7 @@ class WebsiteAnalyzer:
                 "role": "user",
                 "content": f"We are trying to gather the following information: {json.dumps(missing_fields)}."
                            f"Here are the available links: {json.dumps(possible_links)}."
-                           f"Please suggest the most relevant links to explore."
+                           f"Please suggest the most relevant links to explore. Do not suggest link with fragment identifiers (#)"
             }
         ]
 
@@ -190,3 +210,5 @@ class WebsiteAnalyzer:
         )
 
         return response.get("links", [])
+
+

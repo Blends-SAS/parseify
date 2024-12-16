@@ -1,6 +1,6 @@
 import requests
 import json
-
+import openai
 class OpenAIParser:
     """
     Parser for content extraction using OpenAI's API via direct HTTP requests.
@@ -63,3 +63,57 @@ class OpenAIParser:
         except requests.RequestException as e:
             print(f"HTTP request failed: {e}")
             return None
+
+
+
+
+class OpenAIService:
+
+
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = "https://api.openai.com/v1"
+        
+
+    def __call__(self, messages):
+
+        client = openai.OpenAI(api_key = self.api_key, base_url=self.base_url)
+        response = client.chat.completions.create(
+            model = 'gpt-4o',
+            messages = messages,
+            temperature=0,
+            max_tokens=3500,
+            top_p=1,
+            frequency_penalty=0, 
+            presence_penalty =0
+        )
+
+        return response.choices[0].message.content
+    
+    def translate(self, results, language):
+            
+            ''' Takes results from Websiteanalizer and translates them into the desired language'''
+            
+            #print('##### Raw results from parsiefy #####', results)
+            prompt = f"""
+                        Below, I will provide a Python dictionary containing some information. The values of this dictionary may be in various languages.
+
+                        Your task is to:
+
+                        1. Translate only the values of the dictionary into {language}.
+                        2. If a value is already in the desired language, leave it unchanged.
+                        4. If the value to translate is an URL or a name, leave it unchanged.
+                        2. Return the dictionary as a string  format that is JSON-compatible and can be directly parsed using json.loads in Python.
+                        Ensure the output contains no additional text or formatting—only the JSON representation of the dictionary.
+
+                        ### PYTHON DICTIONARY ###
+
+                        {json.dumps(results)}
+                        """
+            messages = [{"role": "user","content": prompt}]
+            # Call gpt and json loads the results
+            translated_results = self.__call__(messages=messages)[7:-3]
+            # print("##### Translated results ####", translated_results)
+            results = json.loads(translated_results)
+
+            return results
